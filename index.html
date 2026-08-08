@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Offline Call of Duty Challengers player performance analytics dashboard">
+  <title>Challengers Player Analytics</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles-extra.css">
+</head>
+<body>
+  <div class="page-glow glow-one"></div><div class="page-glow glow-two"></div>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand-branding" aria-label="BUSHAI"><img class="brand-crest" src="logo1.jpg" alt="BUSHAI crest"><div class="brand"><span class="eyebrow">BUSHAI INTELLIGENCE · 2024 MW3 DATASET</span><h1><em>PLAYER ANALYTICS</em></h1><p>Performance intelligence for scouting, roster building, and match preparation.</p></div></div>
+      <div class="header-actions">
+        <label class="search-wrap"><span class="sr-only">Search players</span><span class="search-icon">⌕</span><input id="playerSearch" type="search" placeholder="Search player" autocomplete="off"></label>
+        <button id="aboutButton" class="button button-quiet" type="button" aria-haspopup="dialog">About</button>
+        <button id="resetFilters" class="button button-quiet" type="button">Reset filters</button>
+      </div>
+    </header>
+
+    <section class="filterbar" aria-label="Global filters">
+      <div class="filter-status"><strong id="visibleCount">96</strong><span>of <span id="totalCount">96</span> players in view</span></div>
+      <label>Mode focus<select id="modeFocus"><option value="overall">Overall</option><option value="hp">Hardpoint</option><option value="snd">Search &amp; Destroy</option><option value="ctl">Control</option></select></label>
+      <label>Min. series<input id="minSeries" type="number" min="0" step="1" value="0"></label>
+      <label>Min. HP maps<input id="minHpMaps" type="number" min="0" step="1" value="0"></label>
+      <label>Min. SND maps<input id="minSndMaps" type="number" min="0" step="1" value="0"></label>
+      <label>Min. CTL maps<input id="minCtlMaps" type="number" min="0" step="1" value="0"></label>
+    </section>
+
+    <section id="kpiGrid" class="kpi-grid" aria-label="Performance summary"></section>
+
+    <section class="section-grid main-grid">
+      <article class="panel player-map-panel">
+        <div class="panel-heading"><div><span class="eyebrow">FIELD EXPLORER</span><h2>Main Player Map</h2><p>Every dot is a player. Click to open a scouting profile.</p></div><div class="metric-controls"><label>X axis<select id="scatterX"></select></label><label>Y axis<select id="scatterY"></select></label></div></div>
+        <div id="playerMap" class="chart chart-large" role="img" aria-label="Interactive player scatter plot"></div>
+      </article>
+      <article class="panel ranking-panel">
+        <div class="panel-heading compact"><div><span class="eyebrow">LEADERBOARD</span><h2>Player Ranking</h2></div><div class="metric-controls"><label>Metric<select id="rankingMetric"></select></label></div></div>
+        <div class="segmented" id="rankLimit" aria-label="Ranking limit"><button class="active" data-limit="10" type="button">Top 10</button><button data-limit="20" type="button">Top 20</button><button data-limit="all" type="button">All</button></div>
+        <div id="rankingChart" class="chart chart-ranking" role="img" aria-label="Player ranking chart"></div>
+      </article>
+    </section>
+
+    <section class="section-grid lower-grid">
+      <article class="panel quadrant-panel">
+        <div class="panel-heading"><div><span class="eyebrow">RELATIONSHIP EXPLORER</span><h2>Quadrant Analysis</h2><p>See how performance traits intersect across the field.</p></div><div class="metric-controls"><label>Preset<select id="quadrantPreset"><option value="overall">Overall Impact</option><option value="objective">Slaying vs Objective</option><option value="snd">SND Impact</option><option value="ctl">Control Impact</option><option value="custom">Custom</option></select></label><label>X<select id="quadrantX"></select></label><label>Y<select id="quadrantY"></select></label></div></div>
+        <div id="quadrantChart" class="chart chart-quadrant" role="img" aria-label="Interactive quadrant analysis plot"></div>
+      </article>
+      <article class="panel distribution-panel">
+        <div class="panel-heading compact"><div><span class="eyebrow">SCOUTING CONTEXT</span><h2>Where Does This Player Sit?</h2><p id="distributionHint">Select a player to locate them in the field.</p></div><label>Metric<select id="distributionMetric"></select></label></div>
+        <div id="distributionChart" class="chart chart-distribution" role="img" aria-label="Player metric distribution"></div>
+      </article>
+    </section>
+
+    <section class="panel table-panel">
+      <div class="panel-heading"><div><span class="eyebrow">PLAYER DIRECTORY</span><h2>Sortable scouting table</h2><p>Click any row for a full relative performance profile.</p></div><div class="table-view-control"><span>Table view</span><div id="tableMode" class="segmented table-segmented" role="group" aria-label="Table metrics view"><button class="active" data-table-view="overall" type="button">Overall metrics</button><button data-table-view="modes" type="button">Game mode metrics</button></div></div></div>
+      <div class="table-wrap"><table id="playerTable"><thead></thead><tbody></tbody></table></div>
+    </section>
+
+    <footer class="site-footer">Unofficial fan project <span>·</span> Data source: <a href="https://breakingpoint.gg/" target="_blank" rel="noopener noreferrer">BreakingPoint.gg</a> <span>·</span> <a href="about.html">About &amp; Attribution</a></footer>
+  </main>
+
+  <div id="drawerScrim" class="drawer-scrim" hidden></div>
+  <aside id="playerDrawer" class="drawer" aria-label="Player profile" aria-hidden="true">
+    <div id="drawerContent"></div>
+  </aside>
+  <div id="aboutScrim" class="about-scrim" hidden></div>
+  <section id="aboutModal" class="about-modal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle" aria-hidden="true">
+    <button id="aboutClose" class="drawer-close" type="button" aria-label="Close about project">×</button>
+    <span class="eyebrow">ABOUT THIS PROJECT</span>
+    <h2 id="aboutTitle">BUSHAI Player Analytics</h2>
+    <p>This is an independent fan-built analytics tool for exploring competitive Call of Duty player performance.</p>
+    <p><strong>Source statistics:</strong> <a href="https://breakingpoint.gg/" target="_blank" rel="noopener noreferrer">BreakingPoint.gg</a><br><strong>Visualizations and derived analytics:</strong> independently calculated by this project.</p>
+    <p class="about-disclaimer">This project is not affiliated with or endorsed by Breaking Point Media Inc. Derived analytics are not official Breaking Point metrics.</p>
+  </section>
+
+  <script src="lib/echarts.min.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
